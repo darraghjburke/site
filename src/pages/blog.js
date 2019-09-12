@@ -1,7 +1,15 @@
 import React from "react"
-
+import { Link, graphql } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
+
+//import styled from "@emotion/styled"
+import { css } from "@emotion/core"
+
+const BlogLink = css`
+  color: black;
+  text-decoration: none;
+  `
 
 const BlogPage = ({ data }) => {
   console.log(data)
@@ -9,44 +17,48 @@ const BlogPage = ({ data }) => {
   <Layout>
     <SEO title="Blog" />
     <div>
-        <h1>My Site's Files</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>relativePath</th>
-              <th>prettySize</th>
-              <th>extension</th>
-              <th>birthTime</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.allFile.edges.map(({ node }, index) => (
-              <tr key={index}>
-                <td>{node.relativePath}</td>
-                <td>{node.prettySize}</td>
-                <td>{node.extension}</td>
-                <td>{node.birthTime}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <h4>{data.allMarkdownRemark.totalCount} Posts</h4>
+        {data.allMarkdownRemark.edges.map(({ node }) => (
+          <div key={node.id}>
+            <Link
+              to={node.fields.slug}
+              css={BlogLink}
+            >
+              <h3>
+                {node.frontmatter.title}{" "}
+                <span
+                >
+                  — {node.frontmatter.date}
+                </span>
+              </h3>
+            <p>{node.excerpt}</p>
+            </Link>
+          </div>
+        ))}
       </div>
   </Layout>
   )
 }
 
 export const query = graphql`
-query {
-  allFile {
-    edges {
-      node {
-        relativePath
-        prettySize
-        extension
-        birthTime(fromNow: true)
+  query {
+    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+      totalCount
+      edges {
+        node {
+          id
+          frontmatter {
+            title
+            date(formatString: "DD MMMM, YYYY")
+          }
+          fields {
+            slug
+          }
+          excerpt
+        }
       }
     }
   }
-}`
+`
 
 export default BlogPage
