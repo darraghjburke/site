@@ -12,6 +12,8 @@ import { useStaticQuery, graphql } from "gatsby"
 import Header from "./header"
 import "./layout.css"
 
+import { LinkA } from "./styles"
+
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
@@ -36,11 +38,11 @@ const Layout = ({ children }) => {
       >
         <main>{children}</main>
         <footer style={{marginTop: '3rem'}}>
-          Built with
+          Powered by 
           {` `}
-          <a href="https://www.gatsbyjs.org">
+          <LinkA href="https://www.gatsbyjs.org">
             GatsbyJS
-          </a>
+          </LinkA>
         </footer>
       </div>
     </>
