@@ -1,7 +1,6 @@
 import React from "react"
 
 import Layout from "../components/layout"
-import Image from "../components/image"
 import SEO from "../components/seo"
 
 const IndexPage = () => (
@@ -10,10 +9,12 @@ const IndexPage = () => (
     <h1>Hey there</h1>
     <p>Welcome my personal website.</p>
     <p>I am a student, developer, and boyfriend. Thanks for visiting :)</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
   </Layout>
 )
 
 export default IndexPage
+
+
+/*<div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
+      <Image />
+    </div>*/
