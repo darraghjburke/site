@@ -60,7 +60,7 @@ const Header = ({ siteTitle }) => (
         <h3>about</h3>
       </Link>
       <a
-        href="https://drive.google.com/open?id=1dUgo6eloksdKyFjCc85N1WwpJmnR-z3X"
+        href="https://drive.google.com/file/d/1-mwblk-gUAtCYSlPezjBA_qZcUHC8rNh/view"
         css={HeaderLink}
         target="_blank">
         <h3>resume</h3>
