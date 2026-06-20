@@ -1,0 +1,648 @@
+---
+import "../styles/global.css";
+import Constellation from "../components/Constellation.astro";
+import Shelf from "../components/Shelf.astro";
+import Principles from "../components/Principles.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const writing = [
+  {
+    label: "Building Figma's Code Layers",
+    href: "https://www.figma.com/blog/building-figmas-code-layers/",
+  },
+  {
+    label: "Context and control in Figma Make",
+    href: "https://www.figma.com/blog/introducing-make-kits-and-make-attachments/",
+  },
+  {
+    label: "Building Obsidian, Tinder's Design System",
+    href: "https://medium.com/tinder/building-obsidian-tinders-design-system-e127770d8e3f",
+  },
+];
+
+const speaking = [
+  {
+    label: "Config 2025: Introducing Code Layers",
+    href: "https://youtu.be/qaZC3XSAeR8?t=1633",
+  },
+];
+
+const elsewhere = [
+  { label: "Twitter", href: "https://x.com/DarraghBurke_" },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/darragh-burke-875509163/",
+  },
+];
+
+const principles = [
+  {
+    label:
+      "The systems we interact with should be beautiful, intuitive, and joyful.",
+    description:
+      "Every second wasted on poorly designed or constructed systems is a lost opportunity. If you're creating something for others, make it good. The world has no shortage of crap. We need fewer, better things.",
+  },
+  {
+    label: "Passion is everything.",
+    description: "All our greatest treasures as a species come from people who love something deeply enough to make it better, day after day. Care and dedication compound over time. Outcomes are determined primarily by opportunity and force of will, not innate ability."
+  },
+  {
+    label: "Technology alone will not solve the world's hardest problems.",
+    description:
+      "Advances in medicine, software, hardware etc. will massively improve human wellbeing. But the most important problems - poverty, bigotry, war, purpose - require sociopolitical solutions. As technologists, we should dream big but remain humble.",
+  },
+];
+
+const interests = [
+  "AI\u2013Human Interfaces",
+  "Computer Graphics",
+  "Bret Victor",
+  "Games",
+];
+
+// Spread each topic across a "depth" (0.3 = far, 1 = near) using a golden-ratio
+// sequence so any number of topics stays well distributed. Depth drives size,
+// blur, brightness, drift and how strongly the cursor pushes each one.
+const depthFor = (i: number) => 0.3 + ((i * 0.6180339887) % 1) * 0.7;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    {/* Apply a saved theme before paint to avoid a flash of the wrong one. */}
+    <script is:inline>
+      (() => {
+        try {
+          const t = localStorage.getItem("theme");
+          if (t === "light" || t === "dark")
+            document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <title>Darragh Burke</title>
+    <meta
+      name="description"
+      content="Darragh Burke — software engineer at Figma, building AI tools that bring design and code together."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Constellation />
+
+    <button
+      id="theme-toggle"
+      class="theme-toggle"
+      type="button"
+      aria-label="Toggle light or dark theme"
+    >
+      <svg
+        class="icon-sun"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="4.2"></circle>
+        <path
+          d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"
+        ></path>
+      </svg>
+      <svg
+        class="icon-moon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M20 14.5A8 8 0 1 1 9.5 4a6.3 6.3 0 0 0 10.5 10.5z"></path>
+      </svg>
+    </button>
+
+    <main class="readout">
+      <h1>Darragh Burke</h1>
+
+      <section class="bio">
+        <p>
+          I'm a software engineer at <a href="https://cognition.ai">Cognition</a
+          >. I'm interested in making software more fun, humane and productive.
+          In the past, I was a technical lead on <a
+            href="https://www.figma.com/make/">Figma&nbsp;Make</a
+          >, worked on <a
+            href="https://medium.com/tinder/building-obsidian-tinders-design-system-e127770d8e3f"
+            >design systems at Tinder</a
+          >, and contributed to <a href="https://www.babylonjs.com/"
+            >Babylon.js</a
+          > at Microsoft. I studied Computer Science at UC Santa Barbara, and Creative Writing at the Orange County School of the Arts.
+        </p>
+      </section>
+
+      <section class="links">
+        <h2>Writing</h2>
+        <ul>
+          {
+            writing.map((l) => (
+              <li>
+                <a href={l.href}>
+                  <span class="link-label">{l.label}</span>
+                  <span class="arrow">↗</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="links">
+        <h2>Speaking</h2>
+        <ul>
+          {
+            speaking.map((l) => (
+              <li>
+                <a href={l.href}>
+                  <span class="link-label">{l.label}</span>
+                  <span class="arrow">↗</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <Principles principles={principles} />
+
+      <!-- <section class="interests">
+        <h2>Interests</h2>
+        <ul class="interests-cloud">
+          {
+            interests.map((topic, i) => (
+              <li
+                class="interest"
+                style={`--i: ${i}; --depth: ${depthFor(i).toFixed(3)}`}
+                tabindex="0"
+              >
+                <span class="interest-word">{topic}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </section> -->
+
+      <Shelf />
+
+      <section class="links">
+        <h2>Elsewhere</h2>
+        <ul>
+          {
+            elsewhere.map((l) => (
+              <li>
+                <a href={l.href}>
+                  <span class="link-label">{l.label}</span>
+                  <span class="arrow">↗</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <footer class="signoff">New York City, NY</footer>
+    </main>
+
+    <style>
+      .readout {
+        max-width: var(--measure);
+        margin: 0 auto;
+        padding: clamp(3rem, 14vh, 9rem) 1.5rem 3rem;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      h1 {
+        font-family: var(--font-serif);
+        font-weight: 400;
+        font-size: clamp(2.4rem, 1.8rem + 3vw, 3.6rem);
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+        color: var(--text-strong);
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: 1.25rem;
+        right: 1.25rem;
+        z-index: 10;
+        width: 2.1rem;
+        height: 2.1rem;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--hairline);
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--bg) 60%, transparent);
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+        color: var(--text-faint);
+        cursor: pointer;
+        transition:
+          color 0.25s ease,
+          border-color 0.25s ease;
+      }
+      .theme-toggle:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      .theme-toggle:focus-visible {
+        outline: none;
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      .theme-toggle svg {
+        width: 1.05rem;
+        height: 1.05rem;
+      }
+      /* Show the icon for the active theme: moon in dark, sun in light. */
+      .theme-toggle .icon-sun {
+        display: none;
+      }
+      @media (prefers-color-scheme: light) {
+        :root:not([data-theme="dark"]) .theme-toggle .icon-sun {
+          display: block;
+        }
+        :root:not([data-theme="dark"]) .theme-toggle .icon-moon {
+          display: none;
+        }
+      }
+      :root[data-theme="light"] .theme-toggle .icon-sun {
+        display: block;
+      }
+      :root[data-theme="light"] .theme-toggle .icon-moon {
+        display: none;
+      }
+      :root[data-theme="dark"] .theme-toggle .icon-sun {
+        display: none;
+      }
+      :root[data-theme="dark"] .theme-toggle .icon-moon {
+        display: block;
+      }
+
+      .bio {
+        margin-top: 2rem;
+      }
+      .bio a {
+        color: var(--text);
+        text-decoration: underline;
+        text-decoration-color: var(--text-faint);
+        text-underline-offset: 3px;
+        transition:
+          color 0.2s ease,
+          text-decoration-color 0.2s ease;
+      }
+      .bio a:hover {
+        color: var(--accent);
+        text-decoration-color: var(--accent);
+      }
+
+      .links {
+        margin-top: 3rem;
+      }
+      .links h2 {
+        font-size: 0.72rem;
+        font-weight: 400;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+      .links ul {
+        list-style: none;
+        margin-top: 0.75rem;
+        border-top: 1px solid var(--hairline);
+      }
+      .links a {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 0.5rem;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid var(--hairline);
+        color: var(--text);
+        transition:
+          color 0.25s ease,
+          padding-left 0.25s ease;
+      }
+      .links a:hover {
+        color: var(--accent);
+        padding-left: 0.4rem;
+      }
+      .arrow {
+        color: var(--text-faint);
+        transition: color 0.25s ease;
+      }
+      .links a:hover .arrow {
+        color: var(--accent);
+      }
+
+      .principles summary:focus-visible {
+        outline: none;
+        color: var(--accent);
+      }
+      .principles summary:focus-visible::before,
+      .principles summary:focus-visible .marker {
+        color: var(--accent);
+      }
+
+      /* Interests — a few topics suspended like bioluminescent motes:
+         a soft halo breathing behind each word, the whole thing drifting
+         a hair. Motion is desynced per item via --i, and the global
+         prefers-reduced-motion rule freezes it into a calm static glow. */
+      .interests {
+        margin-top: 3rem;
+      }
+      .interests h2 {
+        font-size: 0.72rem;
+        font-weight: 400;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+      .interests-cloud {
+        list-style: none;
+        margin-top: 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1.6rem 2.6rem;
+        padding: 1rem 0;
+      }
+      /* Each topic is a mote suspended at some depth (--depth: 0.3 far → 1 near).
+         The <li> carries the cursor "push" (--px/--py, set from JS); the inner
+         word carries its own idle drift so the two transforms compose without
+         fighting. --lum (0→1) is the cursor-proximity glow, also from JS. */
+      .interest {
+        --px: 0px;
+        --py: 0px;
+        --lum: 0;
+        position: relative;
+        cursor: default;
+        outline: none;
+        transform: translate3d(var(--px), var(--py), 0);
+      }
+      /* Stagger the baseline a little so they feel suspended, not lined up. */
+      .interest:nth-child(2n) {
+        margin-top: 1.1em;
+      }
+      .interest:nth-child(3n) {
+        margin-top: -0.7em;
+      }
+      .interest:nth-child(4n) {
+        margin-top: 0.5em;
+      }
+
+      .interest-word {
+        display: inline-block;
+        position: relative;
+        font-family: var(--font-serif);
+        /* nearer motes are larger and sharper, farther ones smaller + softer */
+        font-size: calc(0.92rem + var(--depth) * 0.82rem);
+        line-height: 1.1;
+        filter: blur(calc((1 - var(--depth)) * 1.3px));
+        color: color-mix(
+          in srgb,
+          color-mix(
+            in srgb,
+            var(--text-faint),
+            var(--text) calc(var(--depth) * 100%)
+          ),
+          var(--text-strong) calc(var(--lum) * 100%)
+        );
+        text-shadow:
+          0 0 calc(6px + var(--lum) * 16px)
+            color-mix(
+              in srgb,
+              var(--accent) calc((18% + var(--lum) * 42%) * var(--depth)),
+              transparent
+            ),
+          0 0 calc(14px + var(--lum) * 34px)
+            color-mix(
+              in srgb,
+              var(--accent) calc((10% + var(--lum) * 26%) * var(--depth)),
+              transparent
+            );
+        will-change: transform;
+        animation: interest-drift calc(11s + var(--depth) * 5s) ease-in-out
+          infinite;
+        animation-delay: calc(var(--i) * -2.7s);
+      }
+      /* The breathing bioluminescent halo, sized and brightened by depth. */
+      .interest-word::before {
+        content: "";
+        position: absolute;
+        inset: calc(-0.5em - var(--depth) * 0.25em)
+          calc(-0.7em - var(--depth) * 0.35em);
+        z-index: -1;
+        border-radius: 50%;
+        background: radial-gradient(
+          closest-side,
+          color-mix(
+            in srgb,
+            var(--accent) calc(22% + var(--lum) * 30%),
+            transparent
+          ),
+          transparent 78%
+        );
+        opacity: calc(0.35 + var(--depth) * 0.3);
+        filter: blur(5px);
+        animation: interest-breathe calc(6s + var(--depth) * 3s) ease-in-out
+          infinite;
+        animation-delay: calc(var(--i) * -1.9s);
+      }
+      /* Keyboard / touch fallback when the JS cursor field isn't driving --lum. */
+      .interest:hover,
+      .interest:focus-visible {
+        --lum: 1;
+      }
+      .interest:focus-visible .interest-word {
+        animation-play-state: paused;
+      }
+
+      @keyframes interest-drift {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        30% {
+          transform: translate(
+            calc(var(--depth) * 0.18em),
+            calc(var(--depth) * -0.4em)
+          );
+        }
+        65% {
+          transform: translate(
+            calc(var(--depth) * -0.15em),
+            calc(var(--depth) * 0.3em)
+          );
+        }
+      }
+      @keyframes interest-breathe {
+        0%,
+        100% {
+          opacity: 0.4;
+          transform: scale(0.9);
+        }
+        50% {
+          opacity: 0.85;
+          transform: scale(1.1);
+        }
+      }
+
+      .signoff {
+        margin-top: auto;
+        padding-top: 4rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+    </style>
+
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const btn = document.getElementById("theme-toggle");
+        const systemLight = window.matchMedia("(prefers-color-scheme: light)");
+
+        const effective = () =>
+          root.dataset.theme || (systemLight.matches ? "light" : "dark");
+
+        btn.addEventListener("click", () => {
+          const next = effective() === "dark" ? "light" : "dark";
+          root.dataset.theme = next;
+          try {
+            localStorage.setItem("theme", next);
+          } catch (e) {}
+        });
+      })();
+    </script>
+
+    <script>
+      // Cursor-reactive interests field. Nearby topics bloom (--lum) and drift
+      // away from the pointer (--px/--py), weighted by their depth, then settle.
+      // Skipped when motion is reduced or there's no fine pointer — CSS still
+      // provides a calm static depth field with hover/focus fallbacks.
+      const reduce = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      const fine = window.matchMedia(
+        "(hover: hover) and (pointer: fine)",
+      ).matches;
+      const section = document.querySelector<HTMLElement>(".interests");
+
+      if (section && fine && !reduce) {
+        const items = Array.from(
+          section.querySelectorAll<HTMLElement>(".interest"),
+        );
+        const state = items.map(() => ({ lum: 0, px: 0, py: 0 }));
+        const RADIUS = 240;
+        const EASE = 0.14;
+        let pointer: { x: number; y: number } | null = null;
+        let raf = 0;
+        let rect = section.getBoundingClientRect();
+        const remeasure = () => {
+          rect = section.getBoundingClientRect();
+        };
+
+        const tick = () => {
+          let busy = false;
+          for (let k = 0; k < items.length; k++) {
+            const it = items[k];
+            const s = state[k];
+            const r = it.getBoundingClientRect();
+            const cx = r.left + r.width / 2;
+            const cy = r.top + r.height / 2;
+            const depth =
+              parseFloat(it.style.getPropertyValue("--depth")) || 0.6;
+
+            let lum = 0;
+            let px = 0;
+            let py = 0;
+            if (pointer) {
+              const dx = cx - pointer.x;
+              const dy = cy - pointer.y;
+              const dist = Math.hypot(dx, dy) || 1;
+              const t = Math.max(0, 1 - dist / RADIUS);
+              lum = t * t;
+              const push = lum * 18 * depth;
+              px = (dx / dist) * push;
+              py = (dy / dist) * push;
+            }
+            if (it.matches(":hover") || it.matches(":focus-visible")) {
+              lum = Math.max(lum, 1);
+            }
+
+            s.lum += (lum - s.lum) * EASE;
+            s.px += (px - s.px) * EASE;
+            s.py += (py - s.py) * EASE;
+            it.style.setProperty("--lum", s.lum.toFixed(3));
+            it.style.setProperty("--px", `${s.px.toFixed(2)}px`);
+            it.style.setProperty("--py", `${s.py.toFixed(2)}px`);
+
+            if (
+              lum > 0.003 ||
+              s.lum > 0.003 ||
+              Math.abs(s.px) > 0.05 ||
+              Math.abs(s.py) > 0.05
+            ) {
+              busy = true;
+            }
+          }
+          if (busy || pointer) {
+            raf = requestAnimationFrame(tick);
+          } else {
+            for (const it of items) {
+              it.style.removeProperty("--lum");
+              it.style.removeProperty("--px");
+              it.style.removeProperty("--py");
+            }
+            raf = 0;
+          }
+        };
+        const kick = () => {
+          if (!raf) raf = requestAnimationFrame(tick);
+        };
+
+        window.addEventListener(
+          "pointermove",
+          (e) => {
+            const within =
+              e.clientX > rect.left - RADIUS &&
+              e.clientX < rect.right + RADIUS &&
+              e.clientY > rect.top - RADIUS &&
+              e.clientY < rect.bottom + RADIUS;
+            pointer = within ? { x: e.clientX, y: e.clientY } : null;
+            kick();
+          },
+          { passive: true },
+        );
+        section.addEventListener("focusin", kick);
+        section.addEventListener("focusout", kick);
+        window.addEventListener("scroll", remeasure, { passive: true });
+        window.addEventListener("resize", remeasure);
+      }
+    </script>
+
+  </body>
+</html>

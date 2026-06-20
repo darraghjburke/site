@@ -1,0 +1,431 @@
+---
+/**
+ * A "shelf" of things I love — films, books, and games, sorted by title.
+ * Covers are dimmed at rest; hovering (or focusing) a card lifts the dim
+ * and reveals the title, creator, and year. On touch devices the captions
+ * show by default since there's no hover.
+ * The icons beside the heading filter the grid by type; clicking the active
+ * filter again clears it.
+ */
+import { Image } from "astro:assets";
+
+import sunshine from "../assets/shelf/sunshine.jpg";
+import memento from "../assets/shelf/memento.jpg";
+import parasite from "../assets/shelf/parasite.png";
+import laLaLand from "../assets/shelf/la-la-land.jpg";
+import sinners from "../assets/shelf/sinners.jpg";
+import everythingEverywhere from "../assets/shelf/everything-everywhere.jpg";
+import ladyBird from "../assets/shelf/lady-bird.jpg";
+import thePlacePromised from "../assets/shelf/the-place-promised.jpg";
+import eastOfEden from "../assets/shelf/east-of-eden.jpg";
+import neverLetMeGo from "../assets/shelf/never-let-me-go.jpg";
+import noNoBoy from "../assets/shelf/no-no-boy.jpg";
+import hamnet from "../assets/shelf/hamnet.jpg";
+import outerWilds from "../assets/shelf/outer-wilds.jpg";
+import minecraft from "../assets/shelf/minecraft.jpg";
+import inscryption from "../assets/shelf/inscryption.jpg";
+import pathologic2 from "../assets/shelf/pathologic-2.jpg";
+import duneMessiah from "../assets/shelf/dune-messiah.jpg";
+import stardewValley from "../assets/shelf/stardew-valley.jpg";
+
+// Pre-dithered cover variants live in public/dither/<slug>.png (run `npm run
+// dither` to regenerate). They're shown at rest and resolve to the full-color
+// image on hover/focus.
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+// Filters shown beside the heading; each maps to a `kind` value below.
+const filters = [
+  { kind: "Film", label: "Films" },
+  { kind: "Novel", label: "Books" },
+  { kind: "Game", label: "Games" },
+];
+
+const items = [
+  { img: sunshine, slug: "sunshine", title: "Sunshine", creator: "Danny Boyle", year: 2007, kind: "Film" },
+  { img: memento, slug: "memento", title: "Memento", creator: "Christopher Nolan", year: 2000, kind: "Film" },
+  { img: parasite, slug: "parasite", title: "Parasite", creator: "Bong Joon-ho", year: 2019, kind: "Film" },
+  { img: laLaLand, slug: "la-la-land", title: "La La Land", creator: "Damien Chazelle", year: 2016, kind: "Film" },
+  { img: sinners, slug: "sinners", title: "Sinners", creator: "Ryan Coogler", year: 2025, kind: "Film" },
+  { img: everythingEverywhere, slug: "everything-everywhere", title: "Everything Everywhere All at Once", creator: "Daniels", year: 2022, kind: "Film" },
+  { img: ladyBird, slug: "lady-bird", title: "Lady Bird", creator: "Greta Gerwig", year: 2017, kind: "Film" },
+  { img: thePlacePromised, slug: "the-place-promised", title: "The Place Promised in Our Early Days", creator: "Makoto Shinkai", year: 2004, kind: "Film" },
+  { img: hamnet, slug: "hamnet", title: "Hamnet", creator: "Chloé Zhao", year: 2025, kind: "Film" },
+  { img: eastOfEden, slug: "east-of-eden", title: "East of Eden", creator: "John Steinbeck", year: 1952, kind: "Novel" },
+  { img: neverLetMeGo, slug: "never-let-me-go", title: "Never Let Me Go", creator: "Kazuo Ishiguro", year: 2005, kind: "Novel" },
+  { img: noNoBoy, slug: "no-no-boy", title: "No-No Boy", creator: "John Okada", year: 1957, kind: "Novel" },
+  { img: outerWilds, slug: "outer-wilds", title: "Outer Wilds", creator: "Mobius Digital", year: 2019, kind: "Game" },
+  { img: minecraft, slug: "minecraft", title: "Minecraft", creator: "Mojang", year: 2011, kind: "Game" },
+  { img: inscryption, slug: "inscryption", title: "Inscryption", creator: "Daniel Mullins Games", year: 2021, kind: "Game" },
+  { img: pathologic2, slug: "pathologic-2", title: "Pathologic 2", creator: "Ice-Pick Lodge", year: 2019, kind: "Game" },
+  { img: duneMessiah, slug: "dune-messiah", title: "Dune Messiah", creator: "Frank Herbert", year: 1969, kind: "Novel" },
+  { img: stardewValley, slug: "stardew-valley", title: "Stardew Valley", creator: "ConcernedApe", year: 2016, kind: "Game" },
+];
+
+// Alphabetical by title, ignoring a leading article ("The", "A", "An").
+const sortKey = (s: string) => s.replace(/^(the|a|an)\s+/i, "").toLowerCase();
+items.sort((a, b) => sortKey(a.title).localeCompare(sortKey(b.title)));
+---
+
+<section class="shelf">
+  <div class="shelf-head">
+    <h2>Shelf</h2>
+    <div class="shelf-filters" role="group" aria-label="Filter shelf by type">
+      {
+        filters.map((f) => (
+          <button
+            type="button"
+            class="filter"
+            data-filter={f.kind}
+            aria-pressed="false"
+            aria-label={`Show only ${f.label.toLowerCase()}`}
+            title={f.label}
+          >
+            {f.kind === "Film" && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z" />
+                <path d="m6.2 5.3 3.1 3.9" />
+                <path d="m12.4 3.4 3.1 4" />
+                <path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+              </svg>
+            )}
+            {f.kind === "Novel" && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 6.6C10.4 5.3 8.2 4.8 6 5.05c-.95.1-1.7.9-1.7 1.85v9.4c0 .95.8 1.65 1.75 1.55 2.1-.22 4.25.3 5.95 1.55" />
+                <path d="M12 6.6c1.6-1.3 3.8-1.8 6-1.55.95.1 1.7.9 1.7 1.85v9.4c0 .95-.8 1.65-1.75 1.55-2.1-.22-4.25.3-5.95 1.55" />
+                <path d="M12 6.6V20" />
+              </svg>
+            )}
+            {f.kind === "Game" && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 8.5h10a4.5 4.5 0 0 1 4.4 5.4l-.6 3a2.6 2.6 0 0 1-4.6 1.05L14.8 16H9.2l-1.8 1.95a2.6 2.6 0 0 1-4.6-1.05l-.6-3A4.5 4.5 0 0 1 7 8.5Z" />
+                <path d="M6 11.6v2.2M4.9 12.7h2.2" />
+                <path d="M15.5 11.8h.01M17.6 13.4h.01" />
+              </svg>
+            )}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+  <ul class="shelf-grid">
+    {
+      items.map((it) => (
+        <li class="shelf-item" data-kind={it.kind} tabindex="0">
+          <Image
+            class="cover"
+            src={it.img}
+            alt={`${it.title} — ${it.creator}`}
+            widths={[150, 300]}
+            sizes="(max-width: 480px) 30vw, (max-width: 760px) 22vw, 130px"
+          />
+          <img
+            class="cover-dither"
+            src={`${base}/dither/${it.slug}.png`}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            decoding="async"
+          />
+          <canvas class="cover-gl" aria-hidden="true"></canvas>
+          <figcaption class="info">
+            <div class="caption">
+              <span class="t">{it.title}</span>
+            </div>
+          </figcaption>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .shelf {
+    margin-top: 3.5rem;
+  }
+  .shelf-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .shelf h2 {
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .shelf-filters {
+    display: flex;
+    gap: 0.3rem;
+  }
+  .filter {
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--text-faint);
+    cursor: pointer;
+    transition: color 0.25s ease;
+  }
+  .filter svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  .filter:hover,
+  .filter:focus-visible {
+    outline: none;
+    color: var(--text-dim);
+  }
+  .filter[aria-pressed="true"] {
+    color: var(--accent);
+  }
+
+  .shelf-grid {
+    list-style: none;
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.7rem;
+    /* The reserved min-height (set in JS to avoid scroll-jump on filter) can
+       otherwise stretch the implicit rows apart; pack them to the top so the
+       extra space stays below the grid. */
+    align-content: start;
+  }
+
+  .shelf-item {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    background: var(--bg-elev);
+    cursor: default;
+    outline: none;
+  }
+  .shelf-item:focus-visible {
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  /* Two stacked layers: the dithered cover at rest, the full-colour image on
+     hover/focus. They crossfade. The dither is monochrome and blends with the
+     card "paper" via mix-blend-mode so it reads in both themes (light dots on
+     the dark card, ink dots on the light one). */
+  .cover,
+  .cover-dither {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.5s ease;
+  }
+  .cover {
+    opacity: 0;
+  }
+  .cover-dither {
+    opacity: 1;
+    image-rendering: pixelated;
+    mix-blend-mode: screen;
+  }
+  /* The WebGL layer renders the dither + hover resolve. It's hidden until the
+     renderer activates (.gl-active), so the baked PNG above is the fallback for
+     no-JS / no-WebGL / reduced-motion. Sits over the cover layers, under the
+     caption. */
+  .cover-gl {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    /* Backing buffer is supersampled (see shelfDither SCALE); smooth scaling
+       keeps the resolved photo crisp at native size and under zoom. The dither
+       chunkiness comes from the shader's grid, not from pixelated scaling. */
+  }
+  .shelf.gl-active .cover-gl {
+    display: block;
+  }
+  .shelf-item:hover .cover,
+  .shelf-item:focus-within .cover {
+    opacity: 1;
+  }
+  .shelf-item:hover .cover-dither,
+  .shelf-item:focus-within .cover-dither {
+    opacity: 0;
+  }
+  /* In light mode the card is near-white, so the dither's ink must darken it. */
+  :root[data-theme="light"] .cover-dither {
+    mix-blend-mode: multiply;
+  }
+  :root[data-theme="dark"] .cover-dither {
+    mix-blend-mode: screen;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .cover-dither {
+      mix-blend-mode: multiply;
+    }
+  }
+
+  .info {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0.6rem;
+    background: linear-gradient(
+      to top,
+      rgba(10, 12, 16, 0.94) 0%,
+      rgba(10, 12, 16, 0.5) 45%,
+      transparent 78%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  /* A low-opacity Bayer grain over the scrim, masked to follow the same fade as
+     the gradient so the caption backdrop carries the dithering motif too. */
+  .info::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--dither);
+    background-size: 5px 5px;
+    opacity: 0.14;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(
+      to top,
+      #000 0%,
+      rgba(0, 0, 0, 0.5) 45%,
+      transparent 78%
+    );
+    mask-image: linear-gradient(
+      to top,
+      #000 0%,
+      rgba(0, 0, 0, 0.5) 45%,
+      transparent 78%
+    );
+  }
+  .shelf-item:hover .info,
+  .shelf-item:focus-within .info {
+    opacity: 1;
+  }
+
+  /* A semi-transparent black chip that hugs the caption text so it stays
+     legible over light cover art, not just dark. */
+  .caption {
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    padding: 0.3rem 0.45rem;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  /* The caption sits over a dark chip on the cover art, so it keeps a light
+     color regardless of the page theme. */
+  .info .t {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.2;
+    color: #eef2f6;
+  }
+
+  /* No hover (touch): keep the dithered covers as the resting look and show
+     captions by default; tapping a card (focus) resolves it to full colour. */
+  @media (hover: none) {
+    .info {
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .shelf-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .shelf-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
+
+<script>
+  import autoAnimate from "@formkit/auto-animate";
+  import { initShelfDither } from "../scripts/shelfDither";
+
+  // Toggle filtering of shelf items by type. Clicking an active filter clears it.
+  // Cards are removed from / re-inserted into the DOM (rather than hidden) so
+  // auto-animate can FLIP the remaining items smoothly into their new spots.
+  document.querySelectorAll<HTMLElement>(".shelf").forEach((shelf) => {
+    const grid = shelf.querySelector<HTMLElement>(".shelf-grid");
+    if (!grid) return;
+
+    // Progressive enhancement: GPU dither + hover resolve. Falls back silently
+    // to the baked-PNG covers if WebGL is unavailable or motion is reduced.
+    initShelfDither(shelf);
+    const buttons = Array.from(shelf.querySelectorAll<HTMLElement>(".filter"));
+    // Capture every card up front, in document order, before any are removed.
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>(".shelf-item"));
+    let active: string | null = null;
+
+    autoAnimate(grid);
+
+    // Reserve the grid's full (unfiltered) height so the page length never
+    // changes when items are filtered out. Otherwise the shorter page makes the
+    // browser clamp the scroll position, which reads as a jump. Derived from the
+    // grid metrics so it stays correct across the responsive column counts.
+    const reserveHeight = () => {
+      const cs = getComputedStyle(grid);
+      const cols =
+        cs.gridTemplateColumns.split(" ").filter(Boolean).length || 1;
+      const colGap = parseFloat(cs.columnGap) || 0;
+      const rowGap = parseFloat(cs.rowGap) || 0;
+      const cellWidth = (grid.clientWidth - colGap * (cols - 1)) / cols;
+      const cellHeight = cellWidth * 1.5; // covers are 2 : 3
+      const rows = Math.ceil(cards.length / cols);
+      grid.style.minHeight = `${rows * cellHeight + rowGap * (rows - 1)}px`;
+    };
+    reserveHeight();
+    window.addEventListener("resize", reserveHeight);
+
+    const apply = () => {
+      for (const card of cards) {
+        const show = active === null || card.dataset.kind === active;
+        if (show && !card.isConnected) {
+          // Re-insert before the next card that's currently in the grid so the
+          // original ordering is preserved.
+          const index = cards.indexOf(card);
+          let before: HTMLElement | null = null;
+          for (let i = index + 1; i < cards.length; i++) {
+            if (cards[i].isConnected) {
+              before = cards[i];
+              break;
+            }
+          }
+          grid.insertBefore(card, before);
+        } else if (!show && card.isConnected) {
+          card.remove();
+        }
+      }
+      for (const btn of buttons) {
+        btn.setAttribute("aria-pressed", String(btn.dataset.filter === active));
+      }
+    };
+
+    for (const btn of buttons) {
+      btn.addEventListener("click", () => {
+        const kind = btn.dataset.filter ?? null;
+        active = active === kind ? null : kind;
+        apply();
+      });
+    }
+  });
+</script>

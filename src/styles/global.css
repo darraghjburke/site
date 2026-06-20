@@ -1,0 +1,145 @@
+/* ─────────────────────────────────────────────────────────────
+   Design tokens.
+   Default (dark): a deep-space / deep-ocean palette — near-black
+   blue ground, warm-cool grey text, one starlight accent.
+   Light: the inverse, on warm off-white paper rather than pure white.
+   Theme follows the system preference, with a manual override applied
+   as [data-theme="light"|"dark"] on <html>.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  color-scheme: dark;
+
+  --bg: #0a0c10;          /* night sky away from the city */
+  --bg-elev: #0e1117;
+  --text: #c7cdd6;        /* warm-cool starlight grey */
+  --text-strong: #eef2f6;
+  --text-dim: #79828f;
+  --text-faint: #3b424e;
+  --accent: #bcd4e6;      /* pale cyan-white — starlight / bioluminescence */
+  --accent-soft: rgba(188, 212, 230, 0.5);
+  --hairline: rgba(188, 212, 230, 0.1);
+  --star-rgb: 199, 205, 214;  /* constellation stars (canvas) */
+  --line-rgb: 188, 212, 230;  /* constellation links + bright stars */
+  --field-strength: 1;        /* canvas opacity multiplier (boosted in light) */
+
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --measure: 46rem;       /* readout column width */
+
+  /* An 8x8 Bayer threshold tile (from `npm run dither`). Used as a recurring
+     dithering motif: blended over gradients to break smooth ramps into ordered
+     dots rather than banded color. */
+  --dither: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA+klEQVR42gXBERDCYACA0f8GQTAIgmAQBEEwCIIgCIIgCIJgMBgMgmDQ3WAwGARBEARBEAwGg2AwCILBYDAYDAbBYBB0X+8JSZKwbZt+v8/1eqXdbuO6LsPhkPv9joiiiNlsRlEUaJrG6/VisVhQVRWGYSBUVcX3fTqdDsfjkclkQhiG9Ho9zuczoq5rdrsdSZKwWq34fr9YlkWWZWw2G4Qsy3iex2g04vF40Gq1cByHwWDA7XZDvN9vlssln88H0zSJ45j5fE5Zlui6jphOpzyfTxRF4XK5MB6PCYKAbrfL6XRC/H4/DocDeZ6z3W5pmob9fk+apqzXa/5OWZ9hggDiHwAAAABJRU5ErkJggg==");
+}
+
+/* Light palette — warm paper, deep-ocean ink. Applied when the system
+   prefers light (and dark isn't forced) or when light is forced. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #fcfbf5;        /* soft warm off-white, not pure white */
+    --bg-elev: #fbf8f2;
+    --text: #2c2f36;
+    --text-strong: #14171c;
+    --text-dim: #6b7079;
+    --text-faint: #aaa295;
+    --accent: #2f6079;    /* deep ocean cyan-blue */
+    --accent-soft: rgba(47, 96, 121, 0.5);
+    --hairline: rgba(47, 96, 121, 0.16);
+    --star-rgb: 60, 72, 88;   /* darker for contrast on light paper */
+    --line-rgb: 30, 70, 94;
+    --field-strength: 1.9;    /* boost opacity so stars/links read on paper */
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #fcfbf5;
+  --bg-elev: #fbf8f2;
+  --text: #2c2f36;
+  --text-strong: #14171c;
+  --text-dim: #6b7079;
+  --text-faint: #aaa295;
+  --accent: #2f6079;
+  --accent-soft: rgba(47, 96, 121, 0.5);
+  --hairline: rgba(47, 96, 121, 0.16);
+  --star-rgb: 60, 72, 88;   /* darker for contrast on light paper */
+  --line-rgb: 30, 70, 94;
+  --field-strength: 1.9;    /* boost opacity so stars/links read on paper */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: clamp(0.82rem, 0.78rem + 0.2vw, 0.92rem);
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100svh;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+
+/* A faint ambient glow toward the top of the page (the "sky"), and a very
+   low-opacity Bayer grain laid over it. The grain breaks the smooth radial
+   ramp into ordered dots — seeding the dithering motif page-wide — while
+   staying subtle. Both sit behind the constellation and all content. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 95% 70% at 50% 20%,
+    rgba(var(--line-rgb), 0.13),
+    transparent 60%
+  );
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: var(--dither);
+  background-size: 6px 6px;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Honor users who'd rather not have motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
