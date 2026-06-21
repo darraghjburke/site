@@ -38,8 +38,8 @@
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
-    --bg: #fcfbf5;        /* soft warm off-white, not pure white */
-    --bg-elev: #fbf8f2;
+    --bg: #fdf8f4;        /* soft warm off-white, not pure white */
+    --bg-elev: #fbf6f1;
     --text: #2c2f36;
     --text-strong: #14171c;
     --text-dim: #6b7079;
@@ -54,8 +54,8 @@
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #fcfbf5;
-  --bg-elev: #fbf8f2;
+  --bg: #fdf8f4;
+  --bg-elev: #fbf6f1;
   --text: #2c2f36;
   --text-strong: #14171c;
   --text-dim: #6b7079;
@@ -84,6 +84,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-size: clamp(0.82rem, 0.78rem + 0.2vw, 0.92rem);
   line-height: 1.7;
   letter-spacing: 0.01em;

@@ -44,8 +44,8 @@ const principles = [
       "Every second wasted on poorly designed or constructed systems is a lost opportunity. If you're creating something for others, make it good. The world has no shortage of crap. We need fewer, better things.",
   },
   {
-    label: "Passion is everything.",
-    description: "All our greatest treasures as a species come from people who love something deeply enough to make it better, day after day. Care and dedication compound over time. Outcomes are determined primarily by opportunity and force of will, not innate ability."
+    label: "You need to have fun.",
+    description: "All our greatest treasures as a species come from people who love something deeply enough to make it better, day after day. Care and dedication compound over time. Outcomes are determined primarily by force of will, not innate ability, so you should work on something that excites you."
   },
   {
     label: "Technology alone will not solve the world's hardest problems.",
@@ -99,6 +99,11 @@ const depthFor = (i: number) => 0.3 + ((i * 0.6180339887) % 1) * 0.7;
   <body>
     <Constellation />
 
+    {/* Corner registration marks — a print/blueprint framing detail. */}
+    <div class="reg-marks" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+    </div>
+
     <button
       id="theme-toggle"
       class="theme-toggle"
@@ -147,7 +152,7 @@ const depthFor = (i: number) => 0.3 + ((i * 0.6180339887) % 1) * 0.7;
             >design systems at Tinder</a
           >, and contributed to <a href="https://www.babylonjs.com/"
             >Babylon.js</a
-          > at Microsoft. I studied Computer Science at UC Santa Barbara, and Creative Writing at the Orange County School of the Arts.
+          > at Microsoft. I studied Computer Science at UC Santa Barbara, and Creative Writing at OCSA.
         </p>
       </section>
 
@@ -220,7 +225,10 @@ const depthFor = (i: number) => 0.3 + ((i * 0.6180339887) % 1) * 0.7;
         </ul>
       </section>
 
-      <footer class="signoff">New York City, NY</footer>
+      <footer class="signoff">
+        <span>New York City, NY</span>
+        <span class="coords">40.71° N&ensp;·&ensp;74.01° W</span>
+      </footer>
     </main>
 
     <style>
@@ -516,6 +524,49 @@ const depthFor = (i: number) => 0.3 + ((i * 0.6180339887) % 1) * 0.7;
         letter-spacing: 0.1em;
         text-transform: uppercase;
         color: var(--text-faint);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.4rem 1.5rem;
+      }
+      .signoff .coords {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      /* Registration / crop marks framing the viewport corners. */
+      .reg-marks span {
+        position: fixed;
+        width: 11px;
+        height: 11px;
+        z-index: 1;
+        pointer-events: none;
+        color: var(--text-faint);
+        border: 1px solid transparent;
+      }
+      .reg-marks span:nth-child(1) {
+        top: 0.95rem;
+        left: 0.95rem;
+        border-top-color: currentColor;
+        border-left-color: currentColor;
+      }
+      .reg-marks span:nth-child(2) {
+        top: 0.95rem;
+        right: 0.95rem;
+        border-top-color: currentColor;
+        border-right-color: currentColor;
+      }
+      .reg-marks span:nth-child(3) {
+        bottom: 0.95rem;
+        left: 0.95rem;
+        border-bottom-color: currentColor;
+        border-left-color: currentColor;
+      }
+      .reg-marks span:nth-child(4) {
+        bottom: 0.95rem;
+        right: 0.95rem;
+        border-bottom-color: currentColor;
+        border-right-color: currentColor;
       }
     </style>
 
